@@ -1,0 +1,9 @@
+# rien de tout ça n'est utile dans l'image
+.git
+.venv
+docs
+
+# caches python / outils
+**/__pycache__
+*.egg-info
+.ruff_cache

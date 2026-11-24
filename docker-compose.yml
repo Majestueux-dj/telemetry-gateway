@@ -1,0 +1,41 @@
+services:
+
+  gateway:
+    build: .
+    image: telemetry-gateway:latest
+    container_name: telemetry-gateway
+    restart: unless-stopped   # redémarre tout seul après un crash ou un reboot
+
+    # bus I2C (broches 3 et 5)
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+    # le user gateway doit être dans le groupe i2c pour ouvrir /dev/i2c-1
+    # le gid change d'une Pi à l'autre (getent group i2c), 998 par défaut
+    group_add:
+      - "${I2C_GID:-998}"
+
+    # réseau de l'hôte, plus simple pour l'UDP
+    network_mode: host
+
+    # conf en lecture seule, après une modif un restart suffit (pas de rebuild)
+    volumes:
+      - ./config/gateway.toml:/app/config/gateway.toml:ro
+
+    environment:
+      - TZ=Europe/Paris
+
+    # on limite les logs sinon ça remplit la carte SD
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  autoheal:
+    image: willfarrell/autoheal:1.2.0
+    container_name: autoheal
+    restart: unless-stopped
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=all
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock

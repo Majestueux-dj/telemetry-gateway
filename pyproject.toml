@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telemetry-gateway"
+version = "1.0.0"
+description = "Passerelle de télémesure Raspberry Pi : BMP280 et MPU-6050 envoyés en UDP à une station au sol"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = []
+
+[project.optional-dependencies]
+rpi = ["smbus2>=0.4"]
+dev = ["ruff>=0.4"]
+
+[project.scripts]
+telemetry-gateway = "telemetry_gateway.__main__:main"
+telemetry-ground = "telemetry_gateway.ground.receiver:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]

@@ -1,0 +1,40 @@
+# config de la passerelle
+
+[passerelle]
+id_noeud = 1  # id de la carte, mis dans chaque trame
+periode_sante_s = 5.0  # période des trames SANTE
+fichier_signal_vie = "/tmp/telemetry-gateway.heartbeat"   # pour le healthcheck docker
+niveau_log = "INFO"
+
+[i2c]
+bus = 1    # /dev/i2c-1
+
+[transport]
+hote = "127.0.0.1"  # IP du PC station sol
+port = 5005
+
+[capteurs.bmp280]
+actif = true
+adresse = 0x76   # 0x76 (SDO à la masse) ou 0x77 (SDO à VDD)
+periode_s = 0.5
+pression_mer_pa = 101325.0
+
+[capteurs.mpu6050]
+actif = true
+adresse = 0x68    # 0x68 (AD0 à la masse) ou 0x69 (AD0 à VDD)
+periode_s = 0.05   # 20 Hz
+gamme_accel_g = 2
+gamme_gyro_dps = 250
+
+[surveillance]
+max_erreurs_consecutives = 3  # EN_PANNE après 3 erreurs d'affilée
+delai_reinit_s = 2.0 # doublé à chaque échec
+delai_reinit_max_s = 30.0
+
+# seuils d'alarme
+[surveillance.seuils]
+temperature_max_c = 60.0
+temperature_min_c = -20.0
+pression_min_pa = 30000.0
+choc_g = 3.0  # en g
+gyro_max_dps = 500.0
